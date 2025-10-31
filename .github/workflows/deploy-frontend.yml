@@ -58,7 +58,7 @@ jobs:
           path: build/
 
       - name: Configure AWS Credentials
-        uses: actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.ROLE_ARN }}
           aws-region: us-east-2
