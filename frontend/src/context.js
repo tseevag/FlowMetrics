@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useMemo } from 'react';
 import { taskService, projectService, categoryService, analyticsService } from './data.service';
 
 const AppContext = createContext();
@@ -49,15 +49,15 @@ const appReducer = (state, action) => {
 export const AppProvider = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
 
-  const actions = {
+  const actions = useMemo(() => ({
     setLoading: (loading) => dispatch({ type: 'SET_LOADING', payload: loading }),
     setError: (error) => dispatch({ type: 'SET_ERROR', payload: error }),
     setFilters: (filters) => dispatch({ type: 'SET_FILTERS', payload: filters }),
 
     fetchData: async () => {
       try {
-        actions.setLoading(true);
-        actions.setError(null);
+        dispatch({ type: 'SET_LOADING', payload: true });
+        dispatch({ type: 'SET_ERROR', payload: null });
         const [tasks, projects, categories, analytics] = await Promise.all([
           taskService.getAll(),
           projectService.getAll(),
@@ -71,53 +71,56 @@ export const AppProvider = ({ children }) => {
         dispatch({ type: 'SET_ANALYTICS', payload: analytics || null });
       } catch (error) {
         console.error('Failed to fetch data:', error);
-        actions.setError(error.message || 'Failed to load data');
+        dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to load data' });
       } finally {
-        actions.setLoading(false);
+        dispatch({ type: 'SET_LOADING', payload: false });
       }
     },
 
     createTask: async (taskData) => {
       try {
-        actions.setError(null);
+        dispatch({ type: 'SET_ERROR', payload: null });
         const newTask = await taskService.create(taskData);
         if (newTask) {
           dispatch({ type: 'ADD_TASK', payload: newTask });
-          actions.refreshAnalytics();
+          const analytics = await analyticsService.get();
+          dispatch({ type: 'SET_ANALYTICS', payload: analytics });
         }
         return newTask;
       } catch (error) {
         console.error('Failed to create task:', error);
-        actions.setError(error.message || 'Failed to create task');
+        dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to create task' });
         throw error;
       }
     },
 
     updateTask: async (id, updates) => {
       try {
-        actions.setError(null);
+        dispatch({ type: 'SET_ERROR', payload: null });
         const updatedTask = await taskService.update(id, updates);
         if (updatedTask) {
           dispatch({ type: 'UPDATE_TASK', payload: updatedTask });
-          actions.refreshAnalytics();
+          const analytics = await analyticsService.get();
+          dispatch({ type: 'SET_ANALYTICS', payload: analytics });
         }
         return updatedTask;
       } catch (error) {
         console.error('Failed to update task:', error);
-        actions.setError(error.message || 'Failed to update task');
+        dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to update task' });
         throw error;
       }
     },
 
     deleteTask: async (id) => {
       try {
-        actions.setError(null);
+        dispatch({ type: 'SET_ERROR', payload: null });
         await taskService.delete(id);
         dispatch({ type: 'DELETE_TASK', payload: id });
-        actions.refreshAnalytics();
+        const analytics = await analyticsService.get();
+        dispatch({ type: 'SET_ANALYTICS', payload: analytics });
       } catch (error) {
         console.error('Failed to delete task:', error);
-        actions.setError(error.message || 'Failed to delete task');
+        dispatch({ type: 'SET_ERROR', payload: error.message || 'Failed to delete task' });
         throw error;
       }
     },
@@ -127,14 +130,14 @@ export const AppProvider = ({ children }) => {
         const analytics = await analyticsService.get();
         dispatch({ type: 'SET_ANALYTICS', payload: analytics });
       } catch (error) {
-        actions.setError(error.message);
+        dispatch({ type: 'SET_ERROR', payload: error.message });
       }
     }
-  };
+  }), [dispatch]);
 
   useEffect(() => {
     actions.fetchData();
-  }, []);
+  }, [actions]);
 
   return (
     <AppContext.Provider value={{ state, actions }}>

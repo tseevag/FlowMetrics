@@ -12,7 +12,7 @@ const AppContent = () => {
   const [activeView, setActiveView] = useState('dashboard');
   const [showTaskForm, setShowTaskForm] = useState(false);
   const [editingTask, setEditingTask] = useState(null);
-  const { state, actions } = useApp();
+  const { actions } = useApp();
 
   const handleCreateTask = async (taskData) => {
     await actions.createTask(taskData);
