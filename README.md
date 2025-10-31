@@ -66,7 +66,7 @@ A comprehensive task management application with advanced features, analytics, a
 4. **Environment Setup**
    - Create `.env` file in frontend directory:
    ```
-   REACT_APP_API_URL=http://localhost:8000
+   REACT_APP_API_URL=<URL_OF_BACKEND_SERVER>
    ```
 
 ## Usage

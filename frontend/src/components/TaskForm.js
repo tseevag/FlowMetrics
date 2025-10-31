@@ -7,8 +7,8 @@ const TaskForm = ({ task, onSubmit, onClose }) => {
   const [formData, setFormData] = useState({
     title: '',
     description: '',
-    projectId: projects[0]?.id || '',
-    categoryId: categories[0]?.id || '',
+    projectId: '',
+    categoryId: '',
     priority: 'medium',
     dueDate: '',
     estimatedTime: 0,
@@ -133,6 +133,7 @@ const TaskForm = ({ task, onSubmit, onClose }) => {
                 value={formData.projectId}
                 onChange={(e) => handleChange('projectId', e.target.value)}
               >
+                <option value="">Select a project</option>
                 {projects.map(project => (
                   <option key={project.id} value={project.id}>{project.name}</option>
                 ))}
@@ -146,6 +147,7 @@ const TaskForm = ({ task, onSubmit, onClose }) => {
                 value={formData.categoryId}
                 onChange={(e) => handleChange('categoryId', e.target.value)}
               >
+                <option value="">Select a category</option>
                 {categories.map(category => (
                   <option key={category.id} value={category.id}>{category.name}</option>
                 ))}

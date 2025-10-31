@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useReducer, useEffect } from 'react';
-import { taskService, projectService, categoryService, analyticsService } from './services';
+import { taskService, projectService, categoryService, analyticsService } from './data.service';
 
 const AppContext = createContext();
 
@@ -57,6 +57,7 @@ export const AppProvider = ({ children }) => {
     fetchData: async () => {
       try {
         actions.setLoading(true);
+        actions.setError(null);
         const [tasks, projects, categories, analytics] = await Promise.all([
           taskService.getAll(),
           projectService.getAll(),
@@ -64,12 +65,13 @@ export const AppProvider = ({ children }) => {
           analyticsService.get()
         ]);
         
-        dispatch({ type: 'SET_TASKS', payload: tasks });
-        dispatch({ type: 'SET_PROJECTS', payload: projects });
-        dispatch({ type: 'SET_CATEGORIES', payload: categories });
-        dispatch({ type: 'SET_ANALYTICS', payload: analytics });
+        dispatch({ type: 'SET_TASKS', payload: tasks || [] });
+        dispatch({ type: 'SET_PROJECTS', payload: projects || [] });
+        dispatch({ type: 'SET_CATEGORIES', payload: categories || [] });
+        dispatch({ type: 'SET_ANALYTICS', payload: analytics || null });
       } catch (error) {
-        actions.setError(error.message);
+        console.error('Failed to fetch data:', error);
+        actions.setError(error.message || 'Failed to load data');
       } finally {
         actions.setLoading(false);
       }
@@ -77,31 +79,46 @@ export const AppProvider = ({ children }) => {
 
     createTask: async (taskData) => {
       try {
+        actions.setError(null);
         const newTask = await taskService.create(taskData);
-        dispatch({ type: 'ADD_TASK', payload: newTask });
-        actions.refreshAnalytics();
+        if (newTask) {
+          dispatch({ type: 'ADD_TASK', payload: newTask });
+          actions.refreshAnalytics();
+        }
+        return newTask;
       } catch (error) {
-        actions.setError(error.message);
+        console.error('Failed to create task:', error);
+        actions.setError(error.message || 'Failed to create task');
+        throw error;
       }
     },
 
     updateTask: async (id, updates) => {
       try {
+        actions.setError(null);
         const updatedTask = await taskService.update(id, updates);
-        dispatch({ type: 'UPDATE_TASK', payload: updatedTask });
-        actions.refreshAnalytics();
+        if (updatedTask) {
+          dispatch({ type: 'UPDATE_TASK', payload: updatedTask });
+          actions.refreshAnalytics();
+        }
+        return updatedTask;
       } catch (error) {
-        actions.setError(error.message);
+        console.error('Failed to update task:', error);
+        actions.setError(error.message || 'Failed to update task');
+        throw error;
       }
     },
 
     deleteTask: async (id) => {
       try {
+        actions.setError(null);
         await taskService.delete(id);
         dispatch({ type: 'DELETE_TASK', payload: id });
         actions.refreshAnalytics();
       } catch (error) {
-        actions.setError(error.message);
+        console.error('Failed to delete task:', error);
+        actions.setError(error.message || 'Failed to delete task');
+        throw error;
       }
     },
 

@@ -71,6 +71,8 @@ const AppContent = () => {
   );
 };
 
+console.log("API URL:", process.env.REACT_APP_API_URL);
+
 function App() {
   return (
     <AppProvider>
