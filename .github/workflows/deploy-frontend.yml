@@ -61,6 +61,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.ROLE_ARN }}
+          role-session-name: flowmetrics-deploy
           aws-region: us-east-2
 
       - name: Sync Build Files to S3
