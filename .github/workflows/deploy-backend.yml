@@ -18,6 +18,7 @@ env:
   EB_ENV_NAME: "Flowmetrics-backend-app-env"
   EB_BUCKET_NAME: "elasticbeanstalk-us-east-2-949263681218"
   EB_AWS_REGION: "us-east-2"
+  SESSION_NAME: "flowmetrics-backend-deploy"
   
 
 jobs:
@@ -40,7 +41,7 @@ jobs:
         uses: aws-actions/configure-aws-credentials@v4
         with:
           role-to-assume: ${{ secrets.ROLE_ARN }}
-          role-session-name: flowmetrics-backend-deploy
+          role-session-name: ${{ env.SESSION_NAME }}
           aws-region: ${{ env.EB_AWS_REGION }}
 
       - name: Upload Package to S3
