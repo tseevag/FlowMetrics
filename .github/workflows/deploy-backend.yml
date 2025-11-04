@@ -33,7 +33,7 @@ jobs:
         run: |
           echo "ZIP_FILE_NAME=${EB_APP_NAME}-${{ github.sha }}.zip" >> $GITHUB_ENV
           cd backend
-          zip -r ../${{ env.ZIP_FILE_NAME }}.zip . -x ".*" ".git/*" "node_modules/*"
+          zip -r ../${{ env.ZIP_FILE_NAME }} . -x ".*" ".git/*" "node_modules/*"
         working-directory: ./
 
       - name: Configure AWS Credentials
@@ -45,6 +45,7 @@ jobs:
 
       - name: Upload Package to S3
         run: |
+          ls -R
           aws s3 cp ${{ env.ZIP_FILE_NAME }} s3://${{ env.EB_BUCKET_NAME }}/${{ env.ZIP_FILE_NAME }}
       
       - name: Create New Application Version
