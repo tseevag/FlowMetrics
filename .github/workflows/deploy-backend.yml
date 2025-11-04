@@ -40,7 +40,7 @@ jobs:
         with:
           role-to-assume: ${{ secrets.ROLE_ARN }}
           role-session-name: flowmetrics-backend-deploy
-          aws-region: ${{ env.AWS_REGION }}
+          aws-region: ${{ env.EB_AWS_REGION }}
 
       - name: Upload Package to S3
         run: |
