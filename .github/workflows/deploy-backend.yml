@@ -28,19 +28,8 @@ jobs:
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-          cache: 'npm'
-          cache-dependancy-path: ./backend/package-lock.json
-
-      - name: Install Dependancy
-        run: npm ci
-        working-directory: ./backend
  
-      - name: Create ZIP Deployment Backend/package-lock.json
+      - name: Create ZIP Deployment Package
         run: |
           echo "ZIP_FILE_NAME=${EB_APP_NAME}-${{ github.sha }}.zip" >> $GITHUB_ENV
           zip -r ../${{ env.ZIP_FILE_NAME }} . -x ".*" ".git/*" "node_modules/*"
@@ -65,7 +54,7 @@ jobs:
             --source-bundle S3Bucket=${{ env.EB_BUCKET_NAME }},S3Key=${{ env.ZIP_FILE_NAME }} \
             --no-auto-create-application
 
-      - name: Deploy New Version
+      - name: Update Environment (Deploy New Version)
         run: |
           aws elasticbeanstalk update-environment \
             --environment-name ${{ env.EB_ENV_NAME }} \
