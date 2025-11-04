@@ -32,9 +32,8 @@ jobs:
       - name: Create ZIP Deployment Package
         run: |
           echo "ZIP_FILE_NAME=${EB_APP_NAME}-${{ github.sha }}.zip" >> $GITHUB_ENV
-          echo $ZIP_FILE_NAME
           cd backend
-          zip -r ../${{ env.ZIP_FILE_NAME }} . -x ".*" ".git/*" "node_modules/*"
+          zip -r ../${{env.EB_APP_NAME}}-${{ github.sha }}.zip . -x ".*" ".git/*" "node_modules/*"
         working-directory: ./
 
       - name: Configure AWS Credentials
