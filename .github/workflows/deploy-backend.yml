@@ -54,12 +54,14 @@ jobs:
           aws elasticbeanstalk create-application-version \
             --application-name ${{ env.EB_APP_NAME}} \
             --version-label ${{ github.sha }} \
+            --description "Commit ${{ github.sha }}" \
             --source-bundle S3Bucket=${{ env.EB_BUCKET_NAME }},S3Key=${{ env.ZIP_FILE_NAME }} \
             --no-auto-create-application
 
       - name: Update Environment (Deploy New Version)
         run: |
           aws elasticbeanstalk update-environment \
+            --application-name ${{ env.EB_APP_NAME }}
             --environment-name ${{ env.EB_ENV_NAME }} \
             --version-label ${{ github.sha }}
      
