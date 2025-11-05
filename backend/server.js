@@ -12,7 +12,7 @@ const app = express();
 const PORT = process.env.PORT || 8000;
 
 const corsOptions = {
-  origin: 'https://dvlrv9bl1dh3d.cloudfront.net',
+  origin: 'https://d2gcglx9budd5k.cloudfront.net/',
   optionsSuccessStatus: 200
 };
 
