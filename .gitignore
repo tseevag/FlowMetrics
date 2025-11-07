@@ -7,10 +7,15 @@
 
 # testing
 /coverage
+/artifacts/*
+
+
+.secrets
 
 # production
 */build/
 */dist/
+
 
 # misc
 */.env.local
