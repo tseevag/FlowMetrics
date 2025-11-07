@@ -19,11 +19,12 @@ permissions:
 
 jobs:
   test-input:
+    if: ${{ github.event_name == 'workflow_dispatch' }}
     name: Test Input
     runs-on: ubuntu-latest
     steps:
       - run: echo "${{ inputs.name }}"
-      
+
   build:
     name: Build React App
 
